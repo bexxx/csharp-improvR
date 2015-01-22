@@ -1,0 +1,24 @@
+﻿<?xml version="1.0"?>
+<package>
+  <metadata>
+    <id>CSharpImprovR</id>
+    <version>0.1.0.0</version>
+    <title>CSharpImprovR</title>
+    <authors>Ralf &quot;bexxx&quot; Beckers</authors>
+    <owners>Ralf &quot;bexxx&quot; Beckers</owners>
+    <licenseUrl>http://www.apache.org/licenses/LICENSE-2.0</licenseUrl>
+    <projectUrl>https://github.com/bexxx/csharp-improvR</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>CSharpImprovR - simple quick fixes to improve the readability of C# code.</description>
+    <releaseNotes>Initial diagnostic to replace strings containing parameter names with nameof expressions.</releaseNotes>
+    <copyright>Copyright 2015</copyright>
+    <tags>Roslyn, C#, CSharp, Refactoring</tags>
+    <frameworkAssemblies>
+      <frameworkAssembly assemblyName="System" targetFramework="" />
+    </frameworkAssemblies>
+  </metadata>
+  <files>
+    <file src="*.dll" target="tools\analyzers\" exclude="**\Microsoft.CodeAnalysis.*;**\System.Collections.Immutable.*;**\System.Reflection.Metadata.*" />
+    <file src="tools\*.ps1" target="tools\" />
+  </files>
+</package>
