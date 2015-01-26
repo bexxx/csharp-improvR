@@ -11,7 +11,6 @@ namespace CSharpImprovR.Test
     [TestClass]
     public class UnitTest : CodeFixVerifier
     {
-
         // No diagnostics expected to show up
         [TestMethod]
         public void EmptySourceTest()
@@ -45,7 +44,7 @@ namespace CSharpImprovR.Test
             {
                 Id = NameOfAnalyzer.DiagnosticId,
                 Message = String.Format(NameOfAnalyzer.MessageFormat, "paramName"),
-                Severity = DiagnosticSeverity.Warning,
+                Severity = DiagnosticSeverity.Info,
                 Locations =
                     new[] {
                             new DiagnosticResultLocation("Test0.cs", 12, 53)
@@ -97,7 +96,7 @@ namespace CSharpImprovR.Test
             {
                 Id = NameOfAnalyzer.DiagnosticId,
                 Message = String.Format(NameOfAnalyzer.MessageFormat, "paramName"),
-                Severity = DiagnosticSeverity.Warning,
+                Severity = DiagnosticSeverity.Info,
                 Locations =
                     new[] {
                             new DiagnosticResultLocation("Test0.cs", 12, 53)
@@ -117,7 +116,111 @@ namespace CSharpImprovR.Test
             {
                 if (paramName == null)
                 {
-                    throw new ArgumentNullException(nameof(paramName), ""paramName cannot be null!"");
+                    throw new ArgumentNullException(nameof(paramName), string.Format(""{0} cannot be null!"", nameof(paramName)));
+                }
+            }
+        }
+    }";
+            VerifyCSharpFix(test, fixtest);
+        }
+
+        // Diagnostic and CodeFix both triggered and checked for
+        [TestMethod]
+        public void ThrowWithTwoParametersTestSingleQuoted()
+        {
+            var test = @"
+    using System;
+
+    namespace NS1
+    {
+        class T1
+        {
+            public void Foo(object paramName)   
+            {
+                if (paramName == null)
+                {
+                    throw new ArgumentNullException(""paramName"", ""'paramName' cannot be null!"");
+                }
+            }
+        }
+    }";
+            var expected = new DiagnosticResult
+            {
+                Id = NameOfAnalyzer.DiagnosticId,
+                Message = String.Format(NameOfAnalyzer.MessageFormat, "paramName"),
+                Severity = DiagnosticSeverity.Info,
+                Locations =
+                    new[] {
+                            new DiagnosticResultLocation("Test0.cs", 12, 53)
+                        }
+            };
+
+            VerifyCSharpDiagnostic(test, expected);
+
+            var fixtest = @"
+    using System;
+
+    namespace NS1
+    {
+        class T1
+        {
+            public void Foo(object paramName)   
+            {
+                if (paramName == null)
+                {
+                    throw new ArgumentNullException(nameof(paramName), string.Format(""'{0}' cannot be null!"", nameof(paramName)));
+                }
+            }
+        }
+    }";
+            VerifyCSharpFix(test, fixtest);
+        }
+
+        // Diagnostic and CodeFix both triggered and checked for
+        [TestMethod]
+        public void ThrowWithTwoParametersTestDoubleQuotedNotTouched()
+        {
+            var test = @"
+    using System;
+
+    namespace NS1
+    {
+        class T1
+        {
+            public void Foo(object paramName)   
+            {
+                if (paramName == null)
+                {
+                    throw new ArgumentNullException(""paramName"", ""\""paramName\"" cannot be null!"");
+                }
+            }
+        }
+    }";
+            var expected = new DiagnosticResult
+            {
+                Id = NameOfAnalyzer.DiagnosticId,
+                Message = String.Format(NameOfAnalyzer.MessageFormat, "paramName"),
+                Severity = DiagnosticSeverity.Info,
+                Locations =
+                    new[] {
+                            new DiagnosticResultLocation(@"Test0.cs", 12, 53)
+                        }
+            };
+
+            VerifyCSharpDiagnostic(test, expected);
+
+            var fixtest = @"
+    using System;
+
+    namespace NS1
+    {
+        class T1
+        {
+            public void Foo(object paramName)   
+            {
+                if (paramName == null)
+                {
+                    throw new ArgumentNullException(nameof(paramName), ""\""paramName\"" cannot be null!"");
                 }
             }
         }
